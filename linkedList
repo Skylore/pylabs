@@ -1,0 +1,156 @@
+class Node:
+    def __init__(self, value):
+        self.value = value
+        (self.prev, self.next) = (None, None)
+
+    def __str__(self):
+        prev = 'None' if self.prev == None else self.prev.value
+        next = 'None' if self.next == None else self.next.value
+
+        return 'value: {}, next: {}, prev: {}'.format(self.value, next, prev)
+
+class LinkedList:
+    def __init__(self):
+        (self.head, self.tail) = (None, None)
+        self.__size__ = 0
+
+    def push(self, value):
+        if value == None:
+            return
+        
+        if not isinstance(value, Node):
+            value = Node(value)
+
+
+        if self.__size__ == 0:
+            (self.head, self.tail) = (value, value)
+        else:
+            self.__bind__(self.tail, value)
+            self.tail = value
+
+        self.__size__ += 1
+
+    def pop(self):
+        if self.__size__ != 0:
+            pop = self.tail
+            if self.__size__ == 1:
+                (self.head, self.tail) = (None, None)
+            else:
+                (pop.prev.next, self.tail, pop.prev) = (None, pop.prev, None)
+
+            self.__size__ -= 1
+            return pop
+
+    def unshift(self, value):
+        node = Node(value)
+
+        if self.__size__ == 0:
+            (self.head, self.tail) = (node, node)
+        else:
+            self.__bind__(node, self.head)
+            self.head = node
+        self.__size__ += 1
+
+    def shift(self):
+        if self.__size__ != 0:
+            shift = self.head
+
+            if self.__size__ == 1:
+                (self.head, self.tail) = (None, None)
+            else:
+                (shift.next.prev, self.head, shift.next) = (None, shift.next, None)
+            self.__size__ -= 1
+            return shift
+
+    def insert(self, index, value):
+        if index <= self.__size__ and index >= 0:
+            node = Node(value)
+
+            if index == 0:
+                self.unshift(value)
+            elif index == self.__size__:
+                self.push(node)
+            else:
+                prev = self.get(index - 1)
+                next = prev.next
+
+                self.__bind__(node, next)
+                self.__bind__(prev, node)
+
+            self.__size__ += 1
+
+
+    def find(self, v):
+        if self.__size__ != 0:
+            for i in range(self.__size__):
+                node = self.get(i)
+                if node.value == v:
+                    return node
+        return None
+
+    def get(self, index):
+        if index < self.__size__ and index >= 0:
+            node = self.head
+
+            for i in range(self.__size__):
+                if i == index:
+                    return node
+                node = node.next
+
+    def size(self):
+        return self.__size__
+
+    def __bind__(self, start, end):
+        start.next = end
+        end.prev = start
+
+    def __str__(self):
+        if self.__size__ == 0:
+            return 'empty'
+        else:
+            head = self.head
+            forward = '{} '.format(head.value)
+
+            while head.next != None:
+                head = head.next
+                forward +=  '{} '.format(head.value)
+
+            tail = self.tail
+            reverse = '{} '.format(tail.value)
+
+            while tail.prev != None:
+                tail = tail.prev
+                reverse += '{} '.format(tail.value)
+
+            # isEquals = forward.strip() == reverse[::-1].strip();
+
+            # return 'forward: {}\nreverse: {}\nequals: {}'.format(forward, reverse, isEquals)
+
+            return '{}\n{}'.format(reverse, forward)
+
+
+if __name__ == '__main__':
+    neNadoAbsolutno = int(input())
+    vals = list(map(float, input().split()))
+    n = int(input())
+    
+    actions = []
+    
+    for i in range(n):
+        actions.append(input())
+        
+    ll = LinkedList()    
+    
+    for val in vals:
+        node = Node(val)
+        ll.push(node)
+        
+    for action in actions:
+        acts = action.split()
+        
+        try:
+            getattr(ll, acts[0])() if len(acts) == 1 else getattr(ll, acts[0])(float(acts[1]))
+        except RuntimeError: 
+            pass
+    
+    print(ll)
