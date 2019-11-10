@@ -1,0 +1,29 @@
+class Stack:
+    def __init__(self):
+        self.memory = []
+        
+    def push(self, value):
+        self.memory.append(value)
+        
+    def pop(self):
+        try:
+            return self.memory.pop()
+        except IndexError:
+            pass
+        
+    def reverse(self):
+        self.memory.reverse()
+        
+    def __str__(self):
+        self.reverse()
+        return " ".join(list(map(str ,self.memory)))
+        
+if __name__ == '__main__':
+    overflow = Stack()
+    
+    for i in range(int(input())):
+        action = input().split()
+        
+        getattr(overflow, action[0])(float(action[1])) if len(action) == 2 else getattr(overflow, action[0])()
+            
+    print(overflow)
