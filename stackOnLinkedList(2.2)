@@ -1,0 +1,174 @@
+class Node:
+    def __init__(self, value, prev=None, next=None):
+        self.value = value
+        self.prev = prev
+        self.next = next
+
+    def __str__(self):
+        return str(self.value)
+
+
+class LinkedList:
+    def __init__(self):
+        self.__size__ = 0
+        self.head = self.tail = None
+
+    def push(self, value):
+        node = Node(value)
+
+        if self.__size__ == 0:
+            self.head = self.tail = node
+        else:
+            node.prev = self.tail
+            self.tail.next = node
+            self.tail = node
+
+        self.__size__ += 1
+
+    def pop(self):
+        value = self.tail
+
+        if self.__size__ == 1:
+            self.head = self.tail = None
+        elif self.__size__ > 1:
+            value.prev.next = None
+            self.tail = value.prev
+            value.prev = None
+
+        if value is not None:
+            self.__size__ -= 1
+            return value
+
+    def unshift(self, value):
+        node = Node(value)
+
+        if self.__size__ == 0:
+            self.head = self.tail = node
+        else:
+            self.head.prev = node
+            node.next = self.head
+            self.head = node
+
+        self.__size__ += 1
+
+    def shift(self):
+        value = self.head
+
+        if self.__size__ == 1:
+            self.head = self.tail = None
+        elif self.__size__ > 1:
+            value.next.prev = None
+            self.head = value.next
+            value.next = None
+
+        if value is not None:
+            self.__size__ -= 1
+            return value
+
+    def insert(self, index, value):
+        if index < 0:
+            return
+
+        if index == 0:
+            self.unshift(value)
+        elif index >= self.__size__:
+            self.push(value)
+        else:
+            prev = self.get(index - 1)
+            next = prev.next
+
+            node = Node(value, prev, next)
+            prev.next = node
+            next.prev = node
+            self.__size__ += 1
+
+    def find(self, v):
+        for i in self:
+            if i.value == v:
+                return i
+
+    def get(self, index):
+        if 0 <= index <= self.__size__ - 1:
+            current = 0
+
+            for i in self:
+                if current == index:
+                    return i
+                current += 1
+
+    def __iter__(self):
+        self.current = self.head
+        return self
+
+    def __next__(self):
+        try:
+            value = self.current
+            self.current = self.current.next
+            return value
+        except AttributeError:
+            raise StopIteration
+
+    def __getHead__(self):
+        return self.head
+
+    def size(self):
+        return self.__size__
+
+    def print(self):
+        forward = ''
+
+        for i in self:
+            forward += str(i) + ' '
+
+        print(forward.strip())
+
+
+class Stack(LinkedList):
+    def __init__(self):
+        super(Stack, self).__init__()
+
+    def push(self, value):
+        super().unshift(value)
+
+    def pop(self):
+        return super().shift()
+
+    def reverse(self):
+        buffer = Stack()
+
+        for i in range(super().size()):
+            buffer.push(self.pop())
+
+        for i in buffer:
+            super().push(i.value)
+
+    def print(self):
+        super().print()
+
+    def __iter__(self):
+        self.current = super(Stack, self).__getHead__()
+        return self
+
+    def __next__(self):
+        try:
+            value = self.current
+            self.current = self.current.next
+            return value
+        except AttributeError:
+            raise StopIteration
+
+
+if __name__ == '__main__':
+    n = int(input())
+    actions = [input() for i in range(n)]
+    stack = Stack()
+
+    for action in actions:
+        action = action.split()
+
+        if action[0] == 'push':
+            stack.push(float(action[1]))
+        else:
+            getattr(stack, action[0])()
+
+    stack.print()
