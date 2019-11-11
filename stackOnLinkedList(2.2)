@@ -25,20 +25,6 @@ class LinkedList:
 
         self.__size__ += 1
 
-    def _pop(self):
-        value = self.tail
-
-        if self.__size__ == 1:
-            self.head = self.tail = None
-        elif self.__size__ > 1:
-            value.prev.next = None
-            self.tail = value.prev
-            value.prev = None
-
-        if value is not None:
-            self.__size__ -= 1
-            return value
-
     def _unshift(self, value):
         node = Node(value)
 
@@ -65,37 +51,6 @@ class LinkedList:
             self.__size__ -= 1
             return value
 
-    def _insert(self, index, value):
-        if index < 0:
-            return
-
-        if index == 0:
-            self._unshift(value)
-        elif index >= self.__size__:
-            self._push(value)
-        else:
-            prev = self._get(index - 1)
-            next = prev.next
-
-            node = Node(value, prev, next)
-            prev.next = node
-            next.prev = node
-            self.__size__ += 1
-
-    def _find(self, v):
-        for i in self:
-            if i.value == v:
-                return i
-
-    def _get(self, index):
-        if 0 <= index <= self.__size__ - 1:
-            current = 0
-
-            for i in self:
-                if current == index:
-                    return i
-                current += 1
-
     def __iter__(self):
         self.current = self.head
         return self
@@ -107,9 +62,6 @@ class LinkedList:
             return value
         except AttributeError:
             raise StopIteration
-
-    def __getHead__(self):
-        return self.head
 
     def size(self):
         return self.__size__
@@ -141,21 +93,6 @@ class Stack(LinkedList):
 
         for i in buffer:
             super()._push(i.value)
-
-    def print(self):
-        super().print()
-
-    def __iter__(self):
-        self.current = super(Stack, self).__getHead__()
-        return self
-
-    def __next__(self):
-        try:
-            value = self.current
-            self.current = self.current.next
-            return value
-        except AttributeError:
-            raise StopIteration
 
 
 if __name__ == '__main__':
