@@ -13,7 +13,7 @@ class LinkedList:
         self.__size__ = 0
         self.head = self.tail = None
 
-    def push(self, value):
+    def _push(self, value):
         node = Node(value)
 
         if self.__size__ == 0:
@@ -25,7 +25,7 @@ class LinkedList:
 
         self.__size__ += 1
 
-    def pop(self):
+    def _pop(self):
         value = self.tail
 
         if self.__size__ == 1:
@@ -39,7 +39,7 @@ class LinkedList:
             self.__size__ -= 1
             return value
 
-    def unshift(self, value):
+    def _unshift(self, value):
         node = Node(value)
 
         if self.__size__ == 0:
@@ -51,7 +51,7 @@ class LinkedList:
 
         self.__size__ += 1
 
-    def shift(self):
+    def _shift(self):
         value = self.head
 
         if self.__size__ == 1:
@@ -65,16 +65,16 @@ class LinkedList:
             self.__size__ -= 1
             return value
 
-    def insert(self, index, value):
+    def _insert(self, index, value):
         if index < 0:
             return
 
         if index == 0:
-            self.unshift(value)
+            self._unshift(value)
         elif index >= self.__size__:
-            self.push(value)
+            self._push(value)
         else:
-            prev = self.get(index - 1)
+            prev = self._get(index - 1)
             next = prev.next
 
             node = Node(value, prev, next)
@@ -82,12 +82,12 @@ class LinkedList:
             next.prev = node
             self.__size__ += 1
 
-    def find(self, v):
+    def _find(self, v):
         for i in self:
             if i.value == v:
                 return i
 
-    def get(self, index):
+    def _get(self, index):
         if 0 <= index <= self.__size__ - 1:
             current = 0
 
@@ -128,10 +128,10 @@ class Stack(LinkedList):
         super(Stack, self).__init__()
 
     def push(self, value):
-        super().unshift(value)
+        super()._unshift(value)
 
     def pop(self):
-        return super().shift()
+        return super()._shift()
 
     def reverse(self):
         buffer = Stack()
@@ -140,7 +140,7 @@ class Stack(LinkedList):
             buffer.push(self.pop())
 
         for i in buffer:
-            super().push(i.value)
+            super()._push(i.value)
 
     def print(self):
         super().print()
