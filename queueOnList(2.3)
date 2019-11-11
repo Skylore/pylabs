@@ -1,0 +1,118 @@
+class Node:
+    def __init__(self, value, prev=None, next=None):
+        self.value = value
+        self.prev = prev
+        self.next = next
+
+    def __str__(self):
+        return str(self.value)
+
+
+class LinkedList:
+    def __init__(self):
+        self.__size__ = 0
+        self.head = self.tail = None
+
+    def _push(self, value):
+        node = Node(value)
+
+        if self.__size__ == 0:
+            self.head = self.tail = node
+        else:
+            node.prev = self.tail
+            self.tail.next = node
+            self.tail = node
+
+        self.__size__ += 1
+
+    def _pop(self):
+        value = self.tail
+
+        if self.__size__ == 1:
+            self.head = self.tail = None
+        elif self.__size__ > 1:
+            value.prev.next = None
+            self.tail = value.prev
+            value.prev = None
+
+        if value is not None:
+            self.__size__ -= 1
+            return value
+
+    def _shift(self):
+        value = self.head
+
+        if self.__size__ == 1:
+            self.head = self.tail = None
+        elif self.__size__ > 1:
+            value.next.prev = None
+            self.head = value.next
+            value.next = None
+
+        if value is not None:
+            self.__size__ -= 1
+            return value
+
+    def __iter__(self):
+        self.current = self.head
+        return self
+
+    def __next__(self):
+        try:
+            value = self.current
+            self.current = self.current.next
+            return value
+        except AttributeError:
+            raise StopIteration
+
+    def __getHead__(self):
+        return self.head
+
+    def size(self):
+        return self.__size__
+
+    def print(self):
+        forward = ''
+
+        for i in self:
+            forward += str(i) + ' '
+
+        print(forward.strip())
+
+
+class Queue(LinkedList):
+    def __init__(self):
+        super(Queue, self).__init__()
+
+    def push(self, value):
+        super()._push(value)
+
+    def pop(self):
+        return super()._shift()
+
+    def reverse(self):
+        buffer = Queue()
+
+        for i in range(self.__size__):
+            buffer.push(super()._pop())
+
+        for i in buffer:
+            self.push(i.value)
+
+
+if __name__ == '__main__':
+    n = int(input())
+    actions = [input() for i in range(n)]
+
+    q = Queue()
+
+    for action in actions:
+        action = action.split()
+
+        if action[0] == 'push':
+            q.push(float(action[1]))
+        else:
+            getattr(q, action[0])()
+
+    q.print()
+    
